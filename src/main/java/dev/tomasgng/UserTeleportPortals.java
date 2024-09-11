@@ -7,6 +7,7 @@ import dev.tomasgng.config.dataprovider.ConfigDataProvider;
 import dev.tomasgng.config.dataprovider.MessageDataProvider;
 import dev.tomasgng.database.DatabaseManager;
 import dev.tomasgng.listeners.*;
+import dev.tomasgng.utils.Metrics;
 import dev.tomasgng.utils.PortalCreator;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
@@ -48,6 +49,8 @@ public final class UserTeleportPortals extends JavaPlugin {
         m.registerEvents(new PlayerMoveListener(), this);
         m.registerEvents(new BlockBreakListener(), this);
         m.registerEvents(new BlockPlaceListener(), this);
+
+        new Metrics(this, 23335);
     }
 
     @Override
