@@ -34,6 +34,10 @@ public class MessageDataProvider {
         return manager.getComponentValue(SOURCE_LOCATION_BEING_USED);
     }
 
+    public Component getMaxPortalDistanceReached(int maxPortalDistance) {
+        return replacePlaceholder(manager.getStringValue(PORTAL_DISTANCE_LIMIT_REACHED), "%maxportaldistance%", maxPortalDistance + "");
+    }
+
     public Component getCommandNoPermissions() {
         return manager.getComponentValue(COMMAND_NO_PERMISSIONS);
     }
@@ -55,5 +59,9 @@ public class MessageDataProvider {
 
     public Component getCommandReloadSuccess() {
         return manager.getComponentValue(COMMAND_RELOAD_SUCCESS);
+    }
+
+    private Component replacePlaceholder(String text, String search, String replacement) {
+        return mm.deserialize(text.replaceAll(search, replacement));
     }
 }

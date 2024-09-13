@@ -24,9 +24,9 @@ public class PortalCreator {
 
     private final ConfigDataProvider configDataProvider = UserTeleportPortals.getInstance().getConfigDataProvider();
     private final DatabaseManager db = UserTeleportPortals.getInstance().getDatabaseManager();
-    private final Map<UUID, Location> portals = new HashMap<>();
+    private final Map<UUID, Location> tempPortals = new HashMap<>();
     private final NamespacedKey portalItemKey = new NamespacedKey(UserTeleportPortals.getInstance(), "portalCreationItem");
-    private final List<Portal> createdPortals = new ArrayList<>();
+    private final List<Portal> dbPortals = new ArrayList<>();
 
     public final Map<Player, Location> tempDisabledPortals = new HashMap<>();
 
@@ -36,8 +36,8 @@ public class PortalCreator {
     }
 
     private void updateCreatedPortalsVariable() {
-        createdPortals.clear();
-        createdPortals.addAll(db.getPortals());
+        dbPortals.clear();
+        dbPortals.addAll(db.getPortals());
     }
 
     private ItemStack createBaseItem() {
@@ -55,7 +55,7 @@ public class PortalCreator {
     private void startParticleSpawner() {
         Random random = new Random();
         Bukkit.getScheduler().runTaskTimer(UserTeleportPortals.getInstance(), scheduledTask -> {
-            for (Portal portal : createdPortals) {
+            for (Portal portal : dbPortals) {
                 double randomHeight = random.nextDouble(0, 1.5);
                 portal.getSource().getWorld().spawnParticle(configDataProvider.getPortalParticle(), LocationUtils.toCenterLocation(portal.getSource()).add(0, randomHeight, 0), 2);
             }
@@ -79,7 +79,7 @@ public class PortalCreator {
 
         item.setItemMeta(meta);
         event.getItemDrop().setItemStack(item);
-        portals.put(uuid, loc.add(0, 0.5, 0));
+        tempPortals.put(uuid, loc.add(0, 0.5, 0));
 
         event.getPlayer().spawnParticle(Particle.EXPLOSION, event.getItemDrop().getLocation(), 20);
     }
@@ -92,11 +92,11 @@ public class PortalCreator {
                                        .toList());
         itemStack.setItemMeta(meta);
 
-        portals.put(getUUIDFromItemStack(itemStack), newDestination);
+        tempPortals.put(getUUIDFromItemStack(itemStack), newDestination);
     }
 
     public void createPortal(String playerName, ItemStack item, Location sourceLocation) {
-        Location destLocation = portals.get(getUUIDFromItemStack(item));
+        Location destLocation = tempPortals.get(getUUIDFromItemStack(item));
 
         db.createPortal(new Portal(UUID.randomUUID(),
                                    playerName,
@@ -109,12 +109,12 @@ public class PortalCreator {
                                    destLocation.getY(),
                                    destLocation.getZ()));
 
-        portals.remove(getUUIDFromItemStack(item));
+        tempPortals.remove(getUUIDFromItemStack(item));
         updateCreatedPortalsVariable();
     }
 
     public boolean isPortalItem(ItemStack item) {
-        return item.getItemMeta().getPersistentDataContainer().get(portalItemKey, PersistentDataType.STRING) != null && portals.containsKey(getUUIDFromItemStack(item));
+        return item.getItemMeta().getPersistentDataContainer().get(portalItemKey, PersistentDataType.STRING) != null && tempPortals.containsKey(getUUIDFromItemStack(item));
     }
 
     public void checkIfPlayerIsInPortal(Player player, Location location) {
@@ -129,11 +129,14 @@ public class PortalCreator {
     }
 
     private UUID getUUIDFromItemStack(ItemStack itemStack) {
+        if(!itemStack.hasItemMeta())
+            return null;
+
         return UUID.fromString(itemStack.getItemMeta().getPersistentDataContainer().get(portalItemKey, PersistentDataType.STRING));
     }
 
     public Location getDestination(ItemStack itemStack) {
-        return portals.get(getUUIDFromItemStack(itemStack));
+        return tempPortals.get(getUUIDFromItemStack(itemStack));
     }
 
     public boolean canCreatePortal(Player player) {
@@ -158,6 +161,28 @@ public class PortalCreator {
         int currentPortals = db.getPortalCountByPlayerName(player.getName());
 
         return currentPortals < maxPortals;
+    }
+
+    public int getMaxPortalDistance(Player player) {
+        if(player.isOp())
+            return Integer.MAX_VALUE;
+
+        int maxPortalDistance = configDataProvider.getDefaultMaxPortalDistance();
+        String basePermission = configDataProvider.getMaxPortalDistanceBasePermission();
+
+        for (PermissionAttachmentInfo perm : player.getEffectivePermissions()) {
+            if(!perm.getPermission().startsWith(basePermission))
+                continue;
+
+            try {
+                var number = Integer.parseInt(Arrays.stream(perm.getPermission().split("\\.")).toList().getLast());
+
+                if(number > maxPortalDistance)
+                    maxPortalDistance = number;
+            } catch (NumberFormatException ignored) {}
+        }
+
+        return maxPortalDistance;
     }
 
     public boolean isLocationAlreadyUsed(Location location) {

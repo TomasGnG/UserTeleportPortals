@@ -14,6 +14,11 @@ public class ConfigPathProvider {
                                                                           "The base permission to set max portals per player with permissions",
                                                                           "'utp.portals.5' would set the max portals of a player to 5",
                                                                           "IMPORTANT! Please use a number after the last '.' otherwise the plugin can't recognize it!");
+    public static ConfigPair DEFAULT_MAX_PORTAL_DISTANCE = new ConfigPair("defaultMaxPortalDistance", 50);
+    public static ConfigPair MAX_PORTAL_DISTANCE_PERMISSION = new ConfigPair("maxPortalDistanceBasePermission", "utp.portaldistance",
+                                                                          "The base permission to set the max portal distance in the same world per player",
+                                                                          "'utp.portaldistance.100' would set the max portal distance of a player to 100 blocks",
+                                                                          "IMPORTANT! Please use a number after the last '.' otherwise the plugin can't recognize it!");
     public static ConfigPair PORTAL_MINIMUM_DISTANCE = new ConfigPair("portalMinDistance", 3, "The minimum distance between the source and destination in blocks.", "'sourceLocationTooCloseToDestination' message will be sent if the source location is below the value.");
     public static ConfigPair PORTAL_BLOCK_MATERIAL = new ConfigPair("portalBlockMaterial", Material.CRYING_OBSIDIAN.name(), "The block where the portals can be created");
     public static ConfigPair PORTAL_PARTICLE = new ConfigPair("portalParticle", Particle.PORTAL.name(), "The particle that is shown for portals.");
