@@ -64,9 +64,19 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        if(location.distance(portalCreator.getDestination(item)) < configDataProvider.getPortalMinimumDistance()) {
-            adventure.player(player).sendMessage(messageDataProvider.getSourceLocationTooCloseToDestination());
-            return;
+        if(location.getWorld().getName().equalsIgnoreCase(portalCreator.getDestination(item).getWorld().getName())) {
+            int currentDistance = (int) location.distanceSquared(portalCreator.getDestination(item));
+            int maxPortalDistance = portalCreator.getMaxPortalDistance(player);
+
+            if(currentDistance > (maxPortalDistance * maxPortalDistance)) {
+                adventure.player(player).sendMessage(messageDataProvider.getMaxPortalDistanceReached(maxPortalDistance));
+                return;
+            }
+
+            if(location.distance(portalCreator.getDestination(item)) < configDataProvider.getPortalMinimumDistance()) {
+                adventure.player(player).sendMessage(messageDataProvider.getSourceLocationTooCloseToDestination());
+                return;
+            }
         }
 
         portalCreator.createPortal(event.getPlayer().getName(), item, location);

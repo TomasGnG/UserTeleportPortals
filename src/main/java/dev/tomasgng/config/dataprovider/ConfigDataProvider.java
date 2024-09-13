@@ -41,6 +41,14 @@ public class ConfigDataProvider {
         return config.getString(MAX_PORTALS_BASE_PERMISSION);
     }
 
+    public int getDefaultMaxPortalDistance() {
+        return config.getInteger(DEFAULT_MAX_PORTAL_DISTANCE);
+    }
+
+    public String getMaxPortalDistanceBasePermission() {
+        return config.getString(MAX_PORTAL_DISTANCE_PERMISSION);
+    }
+
     public int getPortalMinimumDistance() {
         return config.getInteger(PORTAL_MINIMUM_DISTANCE);
     }
