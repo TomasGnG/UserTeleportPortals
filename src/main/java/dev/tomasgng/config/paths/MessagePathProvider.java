@@ -13,6 +13,10 @@ public class MessagePathProvider {
     public static ConfigPair SOURCE_LOCATION_BEING_USED = new ConfigPair("sourceLocationAlreadyBeingUsed", "<red>Portal cannot be created at this location.");
     public static ConfigPair PORTAL_DISTANCE_LIMIT_REACHED = new ConfigPair("maxPortalDistanceReached", "<red>The portal is too far away. The max portal distance is %maxportaldistance% blocks");
     public static ConfigPair COMMAND_NO_PERMISSIONS = new ConfigPair("command.noPermissions", "<red>You don't have permissions to execute this command.");
-    public static ConfigPair COMMAND_USAGE = new ConfigPair("command.usage", List.of("<green>/utp reload <dark_gray>| <gray>Reload the config files"));
+    public static ConfigPair COMMAND_USAGE = new ConfigPair("command.usage", List.of("<green>/utp reload <dark_gray>| <gray>Reload the config files",
+                                                                                     "<green>/utp update <dark_gray>| <gray>Download the newest update"));
     public static ConfigPair COMMAND_RELOAD_SUCCESS = new ConfigPair("command.reloadSuccess", "<green>The config files have been reloaded successfully.");
+    public static ConfigPair COMMAND_UPDATE_NO_UPDATE_AVAILABLE = new ConfigPair("command.updateNoUpdateAvailable", "<green>You are using the newest version.");
+    public static ConfigPair COMMAND_UPDATE_SUCCESS = new ConfigPair("command.updateSuccess", "<green>The update have been downloaded. Restart the server to use the new version.");
+    public static ConfigPair COMMAND_UPDATE_FAILURE = new ConfigPair("command.updateFailure", "<red>The download of the update has failed.");
 }

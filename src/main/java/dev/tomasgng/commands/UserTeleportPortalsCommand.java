@@ -28,9 +28,24 @@ public class UserTeleportPortalsCommand implements CommandExecutor, TabCompleter
         }
 
         if(args.length == 1) {
-            portalCreator.reload();
-            adventure.sender(sender).sendMessage(messages.getCommandReloadSuccess());
-            return false;
+            if(args[0].equalsIgnoreCase("reload")) {
+                portalCreator.reload();
+                adventure.sender(sender).sendMessage(messages.getCommandReloadSuccess());
+                return false;
+            }
+            if(args[0].equalsIgnoreCase("update")) {
+                if(UserTeleportPortals.getInstance().getVersionChecker().isLatestVersion()) {
+                    adventure.sender(sender).sendMessage(messages.getCommandUpdateNoUpdateAvailable());
+                    return false;
+                }
+                UserTeleportPortals.getInstance().getVersionChecker().downloadNewestVersion(UserTeleportPortals.getInstance().getDescription().getName(), success -> {
+                    if(success)
+                        adventure.sender(sender).sendMessage(messages.getCommandUpdateSuccess());
+                    else
+                        adventure.sender(sender).sendMessage(messages.getCommandUpdateFailure());
+                });
+                return false;
+            }
         }
 
         adventure.sender(sender).sendMessage(messages.getCommandUsage());
@@ -40,7 +55,7 @@ public class UserTeleportPortalsCommand implements CommandExecutor, TabCompleter
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(args.length == 1)
-            return List.of("reload");
+            return List.of("reload", "update");
 
         return List.of();
     }

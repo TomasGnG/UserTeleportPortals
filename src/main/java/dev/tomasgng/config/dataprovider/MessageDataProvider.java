@@ -61,6 +61,18 @@ public class MessageDataProvider {
         return manager.getComponentValue(COMMAND_RELOAD_SUCCESS);
     }
 
+    public Component getCommandUpdateNoUpdateAvailable() {
+        return manager.getComponentValue(COMMAND_UPDATE_NO_UPDATE_AVAILABLE);
+    }
+
+    public Component getCommandUpdateSuccess() {
+        return manager.getComponentValue(COMMAND_UPDATE_SUCCESS);
+    }
+
+    public Component getCommandUpdateFailure() {
+        return manager.getComponentValue(COMMAND_UPDATE_FAILURE);
+    }
+
     private Component replacePlaceholder(String text, String search, String replacement) {
         return mm.deserialize(text.replaceAll(search, replacement));
     }

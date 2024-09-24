@@ -12,12 +12,11 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 
 public class PlayerDropItemListener implements Listener {
 
-    private final Material supportedItem = UserTeleportPortals.getInstance().getConfigDataProvider().getPortalItemMaterial();
-    private final Material supportedBlock = UserTeleportPortals.getInstance().getConfigDataProvider().getPortalBlockMaterial();
-
     @EventHandler
     public void on(PlayerDropItemEvent event) {
         PortalCreator portalCreator = UserTeleportPortals.getInstance().getPortalCreator();
+        Material supportedItem = UserTeleportPortals.getInstance().getConfigDataProvider().getPortalItemMaterial();
+        Material supportedBlock = UserTeleportPortals.getInstance().getConfigDataProvider().getPortalBlockMaterial();
 
         Bukkit.getScheduler().runTaskLater(UserTeleportPortals.getInstance(), () -> {
             Item item = event.getItemDrop();

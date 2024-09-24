@@ -22,11 +22,12 @@ public class PlayerInteractListener implements Listener {
     private final PortalCreator portalCreator = UserTeleportPortals.getInstance().getPortalCreator();
     private final MessageDataProvider messageDataProvider = UserTeleportPortals.getInstance().getMessageDataProvider();
     private final ConfigDataProvider configDataProvider = UserTeleportPortals.getInstance().getConfigDataProvider();
-    private final Material supportedBlock = configDataProvider.getPortalBlockMaterial();
     private final BukkitAudiences adventure = UserTeleportPortals.getInstance().getAdventure();
 
     @EventHandler
     public void on(PlayerInteractEvent event) {
+        Material supportedBlock = configDataProvider.getPortalBlockMaterial();
+
         if(event.getHand() != EquipmentSlot.HAND)
             return;
 
@@ -68,7 +69,7 @@ public class PlayerInteractListener implements Listener {
             int currentDistance = (int) location.distanceSquared(portalCreator.getDestination(item));
             int maxPortalDistance = portalCreator.getMaxPortalDistance(player);
 
-            if(currentDistance > (maxPortalDistance * maxPortalDistance)) {
+            if(!player.isOp() && currentDistance > (maxPortalDistance * maxPortalDistance)) {
                 adventure.player(player).sendMessage(messageDataProvider.getMaxPortalDistanceReached(maxPortalDistance));
                 return;
             }
