@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public class Portal {
     public static final String TABLE_NAME = "portals";
+    public static final String FIELD_ID = "id";
     public static final String FIELD_PLAYER_NAME = "playerName";
     public static final String FIELD_SOURCE_WORLD = "sourceWorld";
     public static final String FIELD_X = "x";
