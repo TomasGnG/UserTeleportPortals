@@ -189,15 +189,4 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
-
-    public void deleteAll() {
-        try {
-            String sql = "DELETE FROM " + Portal.TABLE_NAME;
-
-            PreparedStatement stm = conn.prepareStatement(sql);
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
