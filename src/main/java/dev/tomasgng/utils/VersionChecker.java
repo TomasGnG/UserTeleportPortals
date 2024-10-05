@@ -43,7 +43,6 @@ public class VersionChecker {
         }
     }
 
-
     /**
      * Checks if the current version being used is the latest version available.
      * @return true if the current version is the latest version available. Otherwise, false.
