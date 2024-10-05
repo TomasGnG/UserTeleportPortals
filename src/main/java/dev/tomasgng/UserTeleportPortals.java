@@ -57,8 +57,10 @@ public final class UserTeleportPortals extends JavaPlugin {
 
         new Metrics(this, 23335);
 
-        adventure.sender(Bukkit.getConsoleSender()).sendMessage(MiniMessage.miniMessage().deserialize("<yellow>UserTeleportPortals <dark_gray>| <yellow>There is a new update update available."));
-        adventure.sender(Bukkit.getConsoleSender()).sendMessage(MiniMessage.miniMessage().deserialize("<yellow>UserTeleportPortals <dark_gray>| <yellow>Update the plugin by using /utp update"));
+        if(!versionChecker.isLatestVersion()) {
+            adventure.sender(Bukkit.getConsoleSender()).sendMessage(MiniMessage.miniMessage().deserialize("<yellow>UserTeleportPortals <dark_gray>| <yellow>There is a new update update available."));
+            adventure.sender(Bukkit.getConsoleSender()).sendMessage(MiniMessage.miniMessage().deserialize("<yellow>UserTeleportPortals <dark_gray>| <yellow>Update the plugin by using /utp update"));
+        }
     }
 
     @Override
