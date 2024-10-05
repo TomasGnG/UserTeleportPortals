@@ -20,7 +20,7 @@ public class MessagePathProvider {
     public static ConfigPair COMMAND_RELOAD_SUCCESS = new ConfigPair("command.reloadSuccess", "<green>The config files have been reloaded successfully.");
 
     public static ConfigPair COMMAND_UPDATE_NO_UPDATE_AVAILABLE = new ConfigPair("command.updateNoUpdateAvailable", "<green>You are using the newest version.");
-    public static ConfigPair COMMAND_UPDATE_SUCCESS = new ConfigPair("command.updateSuccess", "<green>The update have been downloaded. Restart the server to use the new version.");
+    public static ConfigPair COMMAND_UPDATE_SUCCESS = new ConfigPair("command.updateSuccess", "<green>The update has been downloaded. Restart the server to use the new version.");
     public static ConfigPair COMMAND_UPDATE_FAILURE = new ConfigPair("command.updateFailure", "<red>The download of the update has failed.");
 
     public static ConfigPair COMMAND_LISTPORTALS_HEADMSG = new ConfigPair("command.listPortals.headMsg", List.of("<b><green>Your Portals",
@@ -28,5 +28,7 @@ public class MessagePathProvider {
                                                                                                                  "<gray>Max Portal Distance: <yellow>%maxportaldistance%",
                                                                                                                  "",
                                                                                                                  "<red>Leftclick to remove a portal"));
-    public static ConfigPair COMMAND_LISTPORTALS_FORMAT = new ConfigPair("command.listPortals.", "<gray>%number% <dark_gray>| <yellow>%world%<dark_gray>[<yellow>%x%<dark_gray>, <yellow>%y%<dark_gray>, <yellow>%z%<dark_gray>]");
+    public static ConfigPair COMMAND_LISTPORTALS_FORMAT = new ConfigPair("command.listPortals.format", "<gray>%number% <dark_gray>| <yellow>%world%<dark_gray>[<yellow>%x%<dark_gray>, <yellow>%y%<dark_gray>, <yellow>%z%<dark_gray>]");
+
+    public static ConfigPair COMMAND_REMOVEPORTAL_SUCCESS = new ConfigPair("command.removePortal", "<green>Portal has been removed.");
 }

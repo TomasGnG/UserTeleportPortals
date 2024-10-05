@@ -39,7 +39,7 @@ public class DatabaseManager {
             String table = Portal.TABLE_NAME;
 
             String sql = "CREATE TABLE IF NOT EXISTS " + table + " (" +
-                    "id VARCHAR(36) PRIMARY KEY, " +
+                    Portal.FIELD_ID + " VARCHAR(36) PRIMARY KEY, " +
                     Portal.FIELD_PLAYER_NAME + " VARCHAR(50), " +
                     Portal.FIELD_SOURCE_WORLD + " VARCHAR(50), " +
                     Portal.FIELD_X + " DOUBLE, " +
@@ -68,6 +68,40 @@ public class DatabaseManager {
             String sql = "SELECT * FROM " + Portal.TABLE_NAME;
 
             PreparedStatement stm = asyncConn.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Portal portal = new Portal(UUID.fromString(rs.getString(1)),
+                                           rs.getString(2),
+                                           rs.getString(3),
+                                           rs.getDouble(4),
+                                           rs.getDouble(5),
+                                           rs.getDouble(6),
+                                           rs.getString(7),
+                                           rs.getDouble(8),
+                                           rs.getDouble(9),
+                                           rs.getDouble(10));
+
+                portals.add(portal);
+            }
+
+            rs.close();
+            stm.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return portals;
+    }
+
+    public List<Portal> getPortals(String player) {
+        List<Portal> portals = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM " + Portal.TABLE_NAME + " WHERE " + Portal.FIELD_PLAYER_NAME + " =?";
+
+            PreparedStatement stm = asyncConn.prepareStatement(sql);
+            stm.setString(1, player);
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
@@ -131,24 +165,28 @@ public class DatabaseManager {
             stm.setDouble(4, z);
 
             ResultSet rs = stm.executeQuery();
+            Portal portal = getPortalFromResultQuery(rs);
 
-            if(rs.next()) {
-                Portal portal = new Portal(UUID.fromString(rs.getString(1)),
-                                           rs.getString(2),
-                                           rs.getString(3),
-                                           rs.getDouble(4),
-                                           rs.getDouble(5),
-                                           rs.getDouble(6),
-                                           rs.getString(7),
-                                           rs.getDouble(8),
-                                           rs.getDouble(9),
-                                           rs.getDouble(10));
-                stm.close();
-                return portal;
-            } else {
-                stm.close();
-                return null;
-            }
+            stm.close();
+            return portal;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Portal getPortalById(String id) {
+        try {
+            String sql = "SELECT * FROM " + Portal.TABLE_NAME + " WHERE " +
+                    Portal.FIELD_ID + "=?";
+
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, id);
+
+            ResultSet rs = stm.executeQuery();
+            Portal portal = getPortalFromResultQuery(rs);
+
+            stm.close();
+            return portal;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -185,6 +223,39 @@ public class DatabaseManager {
             stm.setDouble(4, z);
             stm.executeUpdate();
             stm.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removePortalById(String id) {
+        try {
+            String sql = "DELETE FROM " + Portal.TABLE_NAME + " WHERE " +
+                    Portal.FIELD_ID + "=?";
+
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, id);
+            stm.executeUpdate();
+            stm.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Portal getPortalFromResultQuery(ResultSet rs) {
+        try {
+            return !rs.next()
+                    ? null
+                    : new Portal(UUID.fromString(rs.getString(1)),
+                                 rs.getString(2),
+                                 rs.getString(3),
+                                 rs.getDouble(4),
+                                 rs.getDouble(5),
+                                 rs.getDouble(6),
+                                 rs.getString(7),
+                                 rs.getDouble(8),
+                                 rs.getDouble(9),
+                                 rs.getDouble(10));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

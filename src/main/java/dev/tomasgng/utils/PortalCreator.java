@@ -2,8 +2,12 @@ package dev.tomasgng.utils;
 
 import dev.tomasgng.UserTeleportPortals;
 import dev.tomasgng.config.dataprovider.ConfigDataProvider;
+import dev.tomasgng.config.dataprovider.MessageDataProvider;
 import dev.tomasgng.database.DatabaseManager;
 import dev.tomasgng.database.Portal;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,11 +26,14 @@ import java.util.*;
 
 public class PortalCreator {
 
+    private final MessageDataProvider messageDataProvider = UserTeleportPortals.getInstance().getMessageDataProvider();
     private final ConfigDataProvider configDataProvider = UserTeleportPortals.getInstance().getConfigDataProvider();
     private final DatabaseManager db = UserTeleportPortals.getInstance().getDatabaseManager();
     private final Map<UUID, Location> tempPortals = new HashMap<>();
     private final NamespacedKey portalItemKey = new NamespacedKey(UserTeleportPortals.getInstance(), "portalCreationItem");
     private final List<Portal> dbPortals = new ArrayList<>();
+
+    private int particlesTimerId = -1;
 
     public final Map<Player, Location> tempDisabledPortals = new HashMap<>();
 
@@ -54,7 +61,12 @@ public class PortalCreator {
 
     private void startParticleSpawner() {
         Random random = new Random();
-        Bukkit.getScheduler().runTaskTimer(UserTeleportPortals.getInstance(), scheduledTask -> {
+
+        if(particlesTimerId > -1) {
+            Bukkit.getScheduler().cancelTask(particlesTimerId);
+        }
+
+        particlesTimerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(UserTeleportPortals.getInstance(), () -> {
             for (Portal portal : dbPortals) {
                 double randomHeight = random.nextDouble(0, 1.5);
                 portal.getSource().getWorld().spawnParticle(configDataProvider.getPortalParticle(), LocationUtils.toCenterLocation(portal.getSource()).add(0, randomHeight, 0), 2);
@@ -143,6 +155,13 @@ public class PortalCreator {
         if(player.isOp())
             return true;
 
+        int maxPortals = getMaxPortals(player);
+        int currentPortals = db.getPortalCountByPlayerName(player.getName());
+
+        return currentPortals < maxPortals;
+    }
+
+    private int getMaxPortals(Player player) {
         int maxPortals = configDataProvider.getDefaultMaxPortals();
         String basePermission = configDataProvider.getMaxPortalsBasePermission();
 
@@ -158,9 +177,7 @@ public class PortalCreator {
             } catch (NumberFormatException ignored) {}
         }
 
-        int currentPortals = db.getPortalCountByPlayerName(player.getName());
-
-        return currentPortals < maxPortals;
+        return maxPortals;
     }
 
     public int getMaxPortalDistance(Player player) {
@@ -198,5 +215,39 @@ public class PortalCreator {
         UserTeleportPortals.getInstance().getConfigManager().reload();
         UserTeleportPortals.getInstance().getMessageManager().reload();
         updateCreatedPortalsVariable();
+        startParticleSpawner();
+    }
+
+    public Portal getPortalById(String id) {
+        return db.getPortalById(id);
+    }
+
+    public void removePortalById(String id) {
+        db.removePortalById(id);
+        updateCreatedPortalsVariable();
+    }
+
+    public void listPortals(Player player) {
+        Audience audience = UserTeleportPortals.getInstance().getAdventure().player(player);
+
+        audience.sendMessage(messageDataProvider.getCommandListPortalsHead(getMaxPortals(player), getMaxPortalDistance(player)));
+
+        List<Portal> portals = db.getPortals(player.getName());
+
+        for (int i = 1; i < portals.size()+1; i++) {
+            Portal portal = portals.get(i-1);
+            String world = portal.getSource().getWorld().getName();
+            double x = portal.getSource().getX();
+            double y = portal.getSource().getY();
+            double z = portal.getSource().getZ();
+
+            Component msg = messageDataProvider.getCommandListPortalsFormat(i, world, x, y, z);
+
+            String command = "/userteleportportals removePortal " + portal.getId().toString();
+            msg = msg.hoverEvent(Component.text(command))
+                    .clickEvent(ClickEvent.runCommand(command));
+
+            audience.sendMessage(msg);
+        }
     }
 }
