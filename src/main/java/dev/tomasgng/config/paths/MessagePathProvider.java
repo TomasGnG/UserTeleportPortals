@@ -15,7 +15,8 @@ public class MessagePathProvider {
 
     public static ConfigPair COMMAND_NO_PERMISSIONS = new ConfigPair("command.noPermissions", "<red>You don't have permissions to execute this command.");
     public static ConfigPair COMMAND_USAGE = new ConfigPair("command.usage", List.of("<green>/utp reload <dark_gray>| <gray>Reload the config files",
-                                                                                     "<green>/utp update <dark_gray>| <gray>Download the newest update"));
+                                                                                     "<green>/utp update <dark_gray>| <gray>Download the newest update",
+                                                                                     "<green>/utp listportals <dark_gray>| <gray>Shows your current limits and your created portals"));
 
     public static ConfigPair COMMAND_RELOAD_SUCCESS = new ConfigPair("command.reloadSuccess", "<green>The config files have been reloaded successfully.");
 
