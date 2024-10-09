@@ -12,6 +12,7 @@ public class MessagePathProvider {
     public static ConfigPair PORTAL_DESTINATION_CHANGED = new ConfigPair("portalDestinationChanged", "<green>You changed the portals destination.");
     public static ConfigPair SOURCE_LOCATION_BEING_USED = new ConfigPair("sourceLocationAlreadyBeingUsed", "<red>Portal cannot be created at this location.");
     public static ConfigPair PORTAL_DISTANCE_LIMIT_REACHED = new ConfigPair("maxPortalDistanceReached", "<red>The portal is too far away. The max portal distance is %maxportaldistance% blocks");
+    public static ConfigPair DIMENSION_PORTAL_MISSING_PERMISSION = new ConfigPair("dimensionPortalMissingPermission", "<red>You are not able to create portals through different worlds.");
 
     public static ConfigPair COMMAND_NO_PERMISSIONS = new ConfigPair("command.noPermissions", "<red>You don't have permissions to execute this command.");
     public static ConfigPair COMMAND_USAGE = new ConfigPair("command.usage", List.of("<green>/utp reload <dark_gray>| <gray>Reload the config files",

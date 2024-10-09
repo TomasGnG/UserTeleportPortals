@@ -5,6 +5,7 @@ import dev.tomasgng.config.dataprovider.ConfigDataProvider;
 import dev.tomasgng.config.dataprovider.MessageDataProvider;
 import dev.tomasgng.utils.LocationUtils;
 import dev.tomasgng.utils.PortalCreator;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +39,7 @@ public class PlayerInteractListener implements Listener {
             return;
 
         Player player = event.getPlayer();
+        Audience audience = adventure.player(player);
         ItemStack item = event.getItem();
 
         if(!portalCreator.isPortalItem(item))
@@ -48,20 +50,20 @@ public class PlayerInteractListener implements Listener {
         event.setUseItemInHand(Event.Result.DENY);
 
         if(!portalCreator.canCreatePortal(player)) {
-            adventure.player(player).sendMessage(messageDataProvider.getPortalLimitReached());
+            audience.sendMessage(messageDataProvider.getPortalLimitReached());
             return;
         }
 
         Location location = LocationUtils.toCenterLocation(event.getClickedBlock().getLocation());
 
         if(portalCreator.isLocationAlreadyUsed(location.add(0, 1, 0))) {
-            adventure.player(player).sendMessage(messageDataProvider.getSourceLocationAlreadyBeingUsed());
+            audience.sendMessage(messageDataProvider.getSourceLocationAlreadyBeingUsed());
             return;
         }
 
         if(event.getClickedBlock().getType() != supportedBlock) {
             portalCreator.updatePortalItemDestination(item, location.clone().subtract(0, 0.5, 0));
-            adventure.player(player).sendMessage(messageDataProvider.getPortalDestinationChanged());
+            audience.sendMessage(messageDataProvider.getPortalDestinationChanged());
             return;
         }
 
@@ -70,18 +72,23 @@ public class PlayerInteractListener implements Listener {
             int maxPortalDistance = portalCreator.getMaxPortalDistance(player);
 
             if(!player.isOp() && currentDistance > (maxPortalDistance * maxPortalDistance)) {
-                adventure.player(player).sendMessage(messageDataProvider.getMaxPortalDistanceReached(maxPortalDistance));
+                audience.sendMessage(messageDataProvider.getMaxPortalDistanceReached(maxPortalDistance));
                 return;
             }
 
             if(location.distance(portalCreator.getDestination(item)) < configDataProvider.getPortalMinimumDistance()) {
-                adventure.player(player).sendMessage(messageDataProvider.getSourceLocationTooCloseToDestination());
+                audience.sendMessage(messageDataProvider.getSourceLocationTooCloseToDestination());
+                return;
+            }
+        } else {
+            if(!player.hasPermission(configDataProvider.getDimensionPortalPermission())) {
+                audience.sendMessage(messageDataProvider.getDimensionPortalsMissingPermission());
                 return;
             }
         }
 
         portalCreator.createPortal(event.getPlayer().getName(), item, location);
-        adventure.player(player).sendMessage(messageDataProvider.getPortalCreated());
+        audience.sendMessage(messageDataProvider.getPortalCreated());
         player.getInventory().remove(item);
     }
 }
