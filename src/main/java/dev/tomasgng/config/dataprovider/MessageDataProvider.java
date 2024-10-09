@@ -39,6 +39,10 @@ public class MessageDataProvider {
         return replacePlaceholder(manager.getStringValue(PORTAL_DISTANCE_LIMIT_REACHED), "%maxportaldistance%", maxPortalDistance + "");
     }
 
+    public Component getDimensionPortalsMissingPermission() {
+        return manager.getComponentValue(DIMENSION_PORTAL_MISSING_PERMISSION);
+    }
+
     public Component getCommandNoPermissions() {
         return manager.getComponentValue(COMMAND_NO_PERMISSIONS);
     }

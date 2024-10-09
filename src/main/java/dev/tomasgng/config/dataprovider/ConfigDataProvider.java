@@ -49,6 +49,10 @@ public class ConfigDataProvider {
         return config.getString(MAX_PORTAL_DISTANCE_PERMISSION);
     }
 
+    public String getDimensionPortalPermission() {
+        return config.getString(DIMENSION_PORTAL_PERMISSION);
+    }
+
     public int getPortalMinimumDistance() {
         return config.getInteger(PORTAL_MINIMUM_DISTANCE);
     }
